@@ -67,7 +67,7 @@ const Navbar = () => {
         </Search>
         <Stack direction="row" spacing={1}>
           <Button color="inherit">Template 1</Button>
-          <Button color="inherit">Template 2</Button>
+          <Button color="inherit" component={Link} to="/profile">Perfil</Button>
           <Button color="inherit" component={Link} to="/login"> Login </Button>
           <Button color="inherit" component={Link} to="/register"> Crea tu cuenta  </Button>
         </Stack>
