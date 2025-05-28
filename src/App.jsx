@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import LoginRegisterPage from './pages/LoginRegisterPage.jsx';
-import Navbar from './components/Navbar.jsx'; // o donde esté tu navbar
+import Navbar from './components/Navbar.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import HardwareDetail from './pages/HardwareDetail';
 
