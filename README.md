@@ -1,12 +1,56 @@
-# React + Vite
+# HardInfo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+HardInfo es una aplicación web desarrollada con React y Vite para visualizar y comparar componentes de hardware de PC. Permite a los usuarios explorar diferentes categorías de productos y comparar las especificaciones detalladas de dos componentes uno al lado del otro.
 
-Currently, two official plugins are available:
+## Características Principales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* Visualización de componentes de hardware por categoría.
+* Página de comparación interactiva para dos productos.
+* Detalles y especificaciones completas para cada componente.
+* Diseño responsivo.
 
-## Expanding the ESLint configuration
+## Instalación y Ejecución
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Sigue estos pasos para configurar y ejecutar el proyecto localmente:
+
+1. Clona este repositorio:
+
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   ```
+2. Navega al directorio del proyecto:
+
+   ```bash
+   cd HardInfo
+   ```
+3. Instala las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+   o si usas yarn:
+
+   ```bash
+   yarn install
+   ```
+4. Ejecuta la aplicación en modo desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+   o si usas yarn:
+
+   ```bash
+   yarn dev
+   ```
+
+La aplicación se abrirá en tu navegador por defecto en `http://localhost:5173/` (o un puerto similar).
+
+## Tecnologías Utilizadas
+
+* React
+* Vite
+* CSS (Custom CSS)
+* JavaScript
