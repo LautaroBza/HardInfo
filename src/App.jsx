@@ -5,6 +5,7 @@ import LoginRegisterPage from './pages/LoginRegisterPage.jsx';
 import Navbar from './components/Navbar.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import HardwareDetail from './pages/HardwareDetail';
+import ComparePage from './pages/ComparePage';
 
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/hardware/:id" element={<HardwareDetail />} />
-        
+        <Route path="/comparar" element={<ComparePage />} />
       </Routes>
     </>
   );
