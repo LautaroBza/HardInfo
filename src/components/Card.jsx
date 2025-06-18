@@ -1,26 +1,73 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Card, CardActions, CardContent, CardMedia, Button, Typography, Stack, Chip } from '@mui/material';
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Button,
+  Typography,
+  Stack,
+  Chip,
+  IconButton
+} from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { useEffect, useState } from 'react';
 
 export default function MediaCard({ component, hideCompareButton }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  console.log('Card component data:', component);
+  useEffect(() => {
+    const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
+    setIsFavorite(favs.includes(component.id));
+  }, [component.id]);
+
+  const handleToggleFavorite = () => {
+    const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
+    let newFavs;
+
+    if (isFavorite) {
+      newFavs = favs.filter(id => id !== component.id);
+    } else {
+      newFavs = [...favs, component.id];
+    }
+
+    localStorage.setItem('favoritos', JSON.stringify(newFavs));
+    setIsFavorite(!isFavorite);
+  };
 
   if (!component) return null;
-
-  // Detectar si estamos en la página de comparar
   const isComparePage = location.pathname.includes('comparar');
 
   return (
-    <Card sx={{ 
-      width: '100%',
-      transition: 'transform 0.3s',
-      '&:hover': {
-        transform: 'scale(1.03)',
-        boxShadow: 6
-      }
-    }}>
+    <Card
+      sx={{
+        width: '100%',
+        position: 'relative',
+        transition: 'transform 0.3s',
+        '&:hover': {
+          transform: 'scale(1.03)',
+          boxShadow: 6
+        }
+      }}
+    >
+      <IconButton
+        onClick={handleToggleFavorite}
+        sx={{
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          backgroundColor: 'white',
+          '&:hover': {
+            backgroundColor: 'rgba(255,255,255,0.8)'
+          }
+        }}
+      >
+        {isFavorite ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon color="error" />}
+      </IconButton>
+
       <CardMedia
         sx={{ height: 180 }}
         image={component.image}
@@ -50,7 +97,6 @@ export default function MediaCard({ component, hideCompareButton }) {
         >
           Detalles
         </Button>
-        {/* Solo mostrar el botón Comparar si no estamos en la página de comparar y no se pasa la prop hideCompareButton */}
         {!(isComparePage || hideCompareButton) && (
           <Button
             size="small"

@@ -6,6 +6,8 @@ import Navbar from './components/Navbar.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import HardwareDetail from './pages/HardwareDetail';
 import ComparePage from './pages/ComparePage';
+import Favoritos from './pages/FavoritosPage';
+
 
 
 function App() {
@@ -20,6 +22,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/hardware/:id" element={<HardwareDetail />} />
         <Route path="/comparar" element={<ComparePage />} />
+        <Route path="/favoritos" element={<Favoritos />} />
       </Routes>
     </>
   );

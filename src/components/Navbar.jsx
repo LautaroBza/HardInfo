@@ -12,6 +12,7 @@ import { styled, alpha } from '@mui/material/styles';
 import ComputerIcon from '@mui/icons-material/Computer';
 import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 // Custom styles for the search bar
 const Search = styled('div')(({ theme }) => ({
@@ -65,11 +66,14 @@ const Navbar = () => {
           </SearchIconWrapper>
           <StyledInputBase placeholder="Buscar componentes…" inputProps={{ 'aria-label': 'search' }} />
         </Search>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} alignItems="center">
           <Button color="inherit" component={Link} to="/comparar">Comparar</Button>
           <Button color="inherit" component={Link} to="/profile">Perfil</Button>
-          <Button color="inherit" component={Link} to="/login"> Login </Button>
-          <Button color="inherit" component={Link} to="/register"> Crea tu cuenta  </Button>
+          <Button color="inherit" component={Link} to="/login">Login</Button>
+          <Button color="inherit" component={Link} to="/register">Crea tu cuenta</Button>
+          <IconButton component={Link} to="/favoritos" color="inherit">
+            <FavoriteBorderIcon />
+          </IconButton>
         </Stack>
       </Toolbar>
     </AppBar>
