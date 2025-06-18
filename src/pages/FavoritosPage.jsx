@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import MediaCard from '../components/Card.jsx'
 import { Grid, Typography, Container } from '@mui/material';
 
+import hardCategories from '../data/hardCategories';
 // Mock de componentes de ejemplo 
 const allComponents = [
   { id: 1, name: "RTX 3060", category: "GPU", price: 450, image: "/imgs/rtx3060.jpg" },
@@ -15,7 +16,7 @@ export default function Favoritos() {
 
   useEffect(() => {
     const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-    const favData = allComponents.filter(comp => favs.includes(comp.id));
+    const favData = hardCategories.filter(comp => favs.includes(comp.id));
     setFavComponents(favData);
   }, []);
 
