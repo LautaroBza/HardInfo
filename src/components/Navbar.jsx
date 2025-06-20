@@ -20,6 +20,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import HardCategories from '../data/hardCategories';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 // Custom styles for the search bar
 const Search = styled('div')(({ theme }) => ({
@@ -169,6 +170,9 @@ const Navbar = () => {
           <Button color="inherit" component={Link} to="/profile">Perfil</Button>
           <Button color="inherit" component={Link} to="/login"> Login </Button>
           <Button color="inherit" component={Link} to="/register"> Crea tu cuenta  </Button>
+          <IconButton component={Link} to="/favoritos" color="inherit">
+            <FavoriteBorderIcon />
+          </IconButton>
         </Stack>
       </Toolbar>
     </AppBar>
