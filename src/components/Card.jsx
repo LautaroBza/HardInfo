@@ -19,19 +19,21 @@ export default function MediaCard({ component, hideCompareButton }) {
   const location = useLocation();
   const [isFavorite, setIsFavorite] = useState(false);
 
+  const productId = component.id_producto || component.id;
+
   useEffect(() => {
     const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-    setIsFavorite(favs.includes(component.id));
-  }, [component.id]);
+    setIsFavorite(favs.includes(productId));
+  }, [productId]);
 
   const handleToggleFavorite = () => {
     const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
     let newFavs;
 
     if (isFavorite) {
-      newFavs = favs.filter(id => id !== component.id);
+      newFavs = favs.filter(id => id !== productId);
     } else {
-      newFavs = [...favs, component.id];
+      newFavs = [...favs, productId];
     }
 
     localStorage.setItem('favoritos', JSON.stringify(newFavs));
@@ -40,6 +42,23 @@ export default function MediaCard({ component, hideCompareButton }) {
 
   if (!component) return null;
   const isComparePage = location.pathname.includes('comparar');
+
+  const getDefaultImage = (type) => {
+    const typeLower = type?.toLowerCase();
+    if (typeLower?.includes('cpu')) {
+      return 'https://via.placeholder.com/300x200/2196F3/FFFFFF?text=CPU';
+    } else if (typeLower?.includes('gpu')) {
+      return 'https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=GPU';
+    } else if (typeLower?.includes('ram')) {
+      return 'https://via.placeholder.com/300x200/FF9800/FFFFFF?text=RAM';
+    } else if (typeLower?.includes('motherboard')) {
+      return 'https://via.placeholder.com/300x200/9C27B0/FFFFFF?text=Motherboard';
+    } else {
+      return 'https://via.placeholder.com/300x200/607D8B/FFFFFF?text=Component';
+    }
+  };
+
+  const imageUrl = component.image || getDefaultImage(component.type);
 
   return (
     <Card
@@ -70,12 +89,12 @@ export default function MediaCard({ component, hideCompareButton }) {
 
       <CardMedia
         sx={{ height: 180 }}
-        image={component.image}
+        image={imageUrl}
         title={component.name}
       />
       <CardContent>
         <Chip 
-          label={component.category} 
+          label={component.type || component.category} 
           size="small" 
           color="primary"
           sx={{ mb: 1 }}
@@ -92,7 +111,13 @@ export default function MediaCard({ component, hideCompareButton }) {
       <CardActions sx={{ justifyContent: 'space-between', p: 2 }}>
         <Button 
           size="small"
-          onClick={() => navigate(`/hardware/${component.id}`)}
+          onClick={() => {
+            if (productId && !isNaN(Number(productId))) {
+              navigate(`/hardware/${productId}`);
+            } else {
+              console.error('ID de producto inválido:', productId);
+            }
+          }}
           variant="outlined"
         >
           Detalles
@@ -103,7 +128,13 @@ export default function MediaCard({ component, hideCompareButton }) {
             color="secondary"
             variant="contained"
             sx={{ ml: 1 }}
-            onClick={() => navigate(`/comparar?categoria=${encodeURIComponent(component.category)}&id=${component.id}`)}
+            onClick={() => {
+              if (productId && !isNaN(Number(productId))) {
+                navigate(`/comparar?categoria=${encodeURIComponent(component.type || component.category)}&id=${productId}`);
+              } else {
+                console.error('ID de producto inválido:', productId);
+              }
+            }}
           >
             Comparar
           </Button>

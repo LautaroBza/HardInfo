@@ -2,11 +2,27 @@ import React from 'react';
 
 const detalles = [
   { label: 'Nombre', key: 'name' },
-  { label: 'Categoría', key: 'category' },
-  { label: 'Descripción', key: 'description' },
+  { label: 'Tipo', key: 'type' },
+  { label: 'Marca', key: 'brand' },
+  { label: 'Descripción', key: 'desc' },
   { label: 'Precio', key: 'price', render: v => v ? `$${v.toFixed(2)}` : '-' },
-  // Agrega aquí más detalles si tu objeto tiene más propiedades
 ];
+
+// Función para obtener una imagen por defecto según el tipo de producto
+const getDefaultImage = (type) => {
+  const typeLower = type?.toLowerCase();
+  if (typeLower?.includes('cpu')) {
+    return 'https://via.placeholder.com/200x150/2196F3/FFFFFF?text=CPU';
+  } else if (typeLower?.includes('gpu')) {
+    return 'https://via.placeholder.com/200x150/4CAF50/FFFFFF?text=GPU';
+  } else if (typeLower?.includes('ram')) {
+    return 'https://via.placeholder.com/200x150/FF9800/FFFFFF?text=RAM';
+  } else if (typeLower?.includes('motherboard')) {
+    return 'https://via.placeholder.com/200x150/9C27B0/FFFFFF?text=Motherboard';
+  } else {
+    return 'https://via.placeholder.com/200x150/607D8B/FFFFFF?text=Component';
+  }
+};
 
 export default function CompareSpecs({ components, onRemove }) {
   return (
@@ -24,7 +40,11 @@ export default function CompareSpecs({ components, onRemove }) {
                 ✕
               </button>
               <div className="compare-imgbox">
-                {components[0].image ? <img src={components[0].image} alt={components[0].name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: 8 }} /> : 'Producto'}
+                <img 
+                  src={components[0].image || getDefaultImage(components[0].type)} 
+                  alt={components[0].name} 
+                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: 8 }} 
+                />
               </div>
               <div className="compare-product-name">{components[0].name}</div>
             </>
@@ -46,7 +66,11 @@ export default function CompareSpecs({ components, onRemove }) {
                 ✕
               </button>
               <div className="compare-imgbox">
-                {components[1].image ? <img src={components[1].image} alt={components[1].name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: 8 }} /> : 'Producto'}
+                <img 
+                  src={components[1].image || getDefaultImage(components[1].type)} 
+                  alt={components[1].name} 
+                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: 8 }} 
+                />
               </div>
               <div className="compare-product-name">{components[1].name}</div>
             </>

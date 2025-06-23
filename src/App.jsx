@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage.jsx';
 import HardwareDetail from './pages/HardwareDetail';
 import ComparePage from './pages/ComparePage';
 import Favoritos from './pages/FavoritosPage';
+import ProductosDestacados from './pages/ProductosDestacados.jsx';
 
 
 
@@ -16,6 +17,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/productos-destacados" element={<ProductosDestacados />} />
         <Route path="/login" element={<LoginRegisterPage mode="login" />} />
         <Route path="/register" element={<LoginRegisterPage mode="register" />} />
         <Route path="*" element={<NotFoundPage />} />

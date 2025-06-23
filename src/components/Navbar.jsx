@@ -18,8 +18,8 @@ import { styled, alpha } from '@mui/material/styles';
 import ComputerIcon from '@mui/icons-material/Computer';
 import SearchIcon from '@mui/icons-material/Search';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useRef } from 'react';
-import HardCategories from '../data/hardCategories';
+import { useState, useRef, useEffect } from 'react';
+import { useProducts } from '../hooks/useProducts';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 // Custom styles for the search bar
@@ -71,6 +71,12 @@ const Navbar = () => {
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
   const navigate = useNavigate();
+  const { products, loadAllProducts } = useProducts();
+
+  // Cargar productos al montar el componente
+  useEffect(() => {
+    loadAllProducts();
+  }, [loadAllProducts]);
 
   // Handle search input changes
   const handleSearchChange = (event) => {
@@ -84,16 +90,21 @@ const Navbar = () => {
     }
 
     // Filter components based on search query
-    const filteredResults = HardCategories.filter((component) => {
+    const filteredResults = products.filter((component) => {
       const queryLower = query.toLowerCase();
       
       // Search in component name
-      if (component.name.toLowerCase().includes(queryLower)) {
+      if (component.name?.toLowerCase().includes(queryLower)) {
         return true;
       }
       
-      // Search in component category
-      if (component.category.toLowerCase().includes(queryLower)) {
+      // Search in component type
+      if (component.type?.toLowerCase().includes(queryLower)) {
+        return true;
+      }
+
+      // Search in component brand
+      if (component.brand?.toLowerCase().includes(queryLower)) {
         return true;
       }
       
@@ -112,6 +123,23 @@ const Navbar = () => {
 
   const handleClickAway = () => {
     setShowResults(false);
+  };
+
+  // Función para obtener la primera especificación del producto
+  const getFirstSpec = (product) => {
+    if (product.propiedad_cpu) {
+      return `Núcleos: ${product.propiedad_cpu.cores || 'N/A'}`;
+    }
+    if (product.propiedad_gpu) {
+      return `VRAM: ${product.propiedad_gpu.vram || 'N/A'} GB`;
+    }
+    if (product.propiedad_ram) {
+      return `Capacidad: ${product.propiedad_ram.size || 'N/A'}`;
+    }
+    if (product.propiedad_motherboard) {
+      return `Chipset: ${product.propiedad_motherboard.chipset || 'N/A'}`;
+    }
+    return 'Sin especificaciones';
   };
 
   return (
@@ -151,9 +179,9 @@ const Navbar = () => {
                           secondary={
                             <>
                               <Typography component="span" variant="body2" color="text.primary">
-                                {result.category}
+                                {result.type}
                               </Typography>
-                              {` — ${result.specs[0].name}: ${result.specs[0].value}`}
+                              {` — ${getFirstSpec(result)}`}
                             </>
                           }
                         />
@@ -166,6 +194,7 @@ const Navbar = () => {
           </ClickAwayListener>
         </Box>
         <Stack direction="row" spacing={1}>
+          <Button color="inherit" component={Link} to="/productos-destacados">Productos Destacados</Button>
           <Button color="inherit" component={Link} to="/comparar">Comparar</Button>
           <Button color="inherit" component={Link} to="/profile">Perfil</Button>
           <Button color="inherit" component={Link} to="/login"> Login </Button>

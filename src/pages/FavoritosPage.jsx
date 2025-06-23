@@ -1,24 +1,51 @@
 import { useEffect, useState } from 'react';
 import MediaCard from '../components/Card.jsx'
-import { Grid, Typography, Container } from '@mui/material';
-
-import hardCategories from '../data/hardCategories';
-// Mock de componentes de ejemplo 
-const allComponents = [
-  { id: 1, name: "RTX 3060", category: "GPU", price: 450, image: "/imgs/rtx3060.jpg" },
-  { id: 2, name: "Ryzen 5 5600X", category: "CPU", price: 220, image: "/imgs/ryzen5.jpg" },
-  { id: 3, name: "MSI B550", category: "Motherboard", price: 150, image: "/imgs/msib550.jpg" },
-  
-];
+import { Grid, Typography, Container, CircularProgress } from '@mui/material';
+import { useProducts } from '../hooks/useProducts';
 
 export default function Favoritos() {
   const [favComponents, setFavComponents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { getProductById } = useProducts();
 
   useEffect(() => {
-    const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-    const favData = hardCategories.filter(comp => favs.includes(comp.id));
-    setFavComponents(favData);
-  }, []);
+    const loadFavorites = async () => {
+      try {
+        const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
+        const favData = [];
+        
+        for (const favId of favs) {
+          if (favId && !isNaN(Number(favId))) {
+            const product = await getProductById(favId);
+            if (product) {
+              favData.push(product);
+            }
+          } else {
+            console.error('ID de favorito inválido:', favId);
+          }
+        }
+        
+        setFavComponents(favData);
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFavorites();
+  }, [getProductById]);
+
+  if (loading) {
+    return (
+      <Container sx={{ mt: 4, textAlign: 'center' }}>
+        <CircularProgress />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Cargando favoritos...
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container sx={{ mt: 4 }}>
@@ -31,7 +58,7 @@ export default function Favoritos() {
       ) : (
         <Grid container spacing={3}>
           {favComponents.map(comp => (
-            <Grid item xs={12} sm={6} md={4} key={comp.id}>
+            <Grid item xs={12} sm={6} md={4} key={comp.id_producto || comp.id}>
               <MediaCard component={comp} />
             </Grid>
           ))}
