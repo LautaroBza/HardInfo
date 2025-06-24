@@ -147,11 +147,8 @@ const Navbar = () => {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton size="large" edge="start" color="inherit" aria-label="logo" sx={{ mr: 1 }}>
-            <Button color='inherit' component={Link} to='/'><ComputerIcon /></Button>
+            <img src='../src/assets/logoWhite.png' alt="Logo" style={{ width: 80, height: 80 }} />
           </IconButton>
-          <Typography variant="h6" component="div">
-            HardInfo
-          </Typography>
         </Box>
         <Box sx={{ position: 'relative' }} ref={searchRef}>
           <ClickAwayListener onClickAway={handleClickAway}>
