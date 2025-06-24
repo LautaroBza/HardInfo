@@ -8,32 +8,45 @@ export default function Favoritos() {
   const [loading, setLoading] = useState(true);
   const { getProductById } = useProducts();
 
-  useEffect(() => {
-    const loadFavorites = async () => {
-      try {
-        const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-        const favData = [];
-        
-        for (const favId of favs) {
-          if (favId && !isNaN(Number(favId))) {
-            const product = await getProductById(favId);
-            if (product) {
-              favData.push(product);
-            }
-          } else {
-            console.error('ID de favorito inválido:', favId);
+  const loadFavorites = async () => {
+    setLoading(true);
+    try {
+      const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
+      const favData = [];
+      
+      for (const favId of favs) {
+        if (favId && !isNaN(Number(favId))) {
+          const product = await getProductById(favId);
+          if (product) {
+            favData.push(product);
           }
+        } else {
+          console.error('ID de favorito inválido:', favId);
         }
-        
-        setFavComponents(favData);
-      } catch (error) {
-        console.error('Error loading favorites:', error);
-      } finally {
-        setLoading(false);
       }
+      
+      setFavComponents(favData);
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadFavorites();
+
+    // Listen for custom event when favorites change
+    const handleFavoritesChange = () => {
+      loadFavorites();
     };
 
-    loadFavorites();
+    window.addEventListener('favoritesChanged', handleFavoritesChange);
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('favoritesChanged', handleFavoritesChange);
+    };
   }, [getProductById]);
 
   if (loading) {

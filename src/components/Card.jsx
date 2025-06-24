@@ -38,6 +38,9 @@ export default function MediaCard({ component, hideCompareButton }) {
 
     localStorage.setItem('favoritos', JSON.stringify(newFavs));
     setIsFavorite(!isFavorite);
+    
+    // Dispatch custom event to notify other components about favorites change
+    window.dispatchEvent(new CustomEvent('favoritesChanged'));
   };
 
   if (!component) return null;
