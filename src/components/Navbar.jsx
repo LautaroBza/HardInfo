@@ -168,25 +168,28 @@ const Navbar = () => {
               {showResults && searchResults.length > 0 && (
                 <SearchResultsWrapper>
                   <List>
-                    {searchResults.map((result) => (
-                      <ListItem 
-                        button 
-                        key={result.id}
-                        onClick={() => handleResultClick(result.id)}
-                      >
-                        <ListItemText 
-                          primary={result.name} 
-                          secondary={
-                            <>
-                              <Typography component="span" variant="body2" color="text.primary">
-                                {result.type}
-                              </Typography>
-                              {` — ${getFirstSpec(result)}`}
-                            </>
-                          }
-                        />
-                      </ListItem>
-                    ))}
+                    {searchResults.map((result) => {
+                      const resultId = result.id_producto || result.id;
+                      return (
+                        <ListItem 
+                          button 
+                          key={resultId}
+                          onClick={() => handleResultClick(resultId)}
+                        >
+                          <ListItemText 
+                            primary={result.name} 
+                            secondary={
+                              <>
+                                <Typography component="span" variant="body2" color="text.primary">
+                                  {result.type}
+                                </Typography>
+                                {` — ${getFirstSpec(result)}`}
+                              </>
+                            }
+                          />
+                        </ListItem>
+                      );
+                    })}
                   </List>
                 </SearchResultsWrapper>
               )}

@@ -46,6 +46,9 @@ const HardwareDetail = () => {
     console.log('Updating favorites:', { old: favs, new: newFavs });
     localStorage.setItem('favoritos', JSON.stringify(newFavs));
     setIsFavorite(!isFavorite);
+    
+    // Dispatch custom event to notify other components about favorites change
+    window.dispatchEvent(new CustomEvent('favoritesChanged'));
   };
 
   const handleCompare = () => {
@@ -148,6 +151,22 @@ const HardwareDetail = () => {
     }
     
     return specs;
+  };
+
+  // Función para obtener una imagen por defecto según el tipo de producto
+  const getDefaultImage = (type) => {
+    const typeLower = type?.toLowerCase();
+    if (typeLower?.includes('cpu')) {
+      return 'https://via.placeholder.com/400x300/2196F3/FFFFFF?text=CPU';
+    } else if (typeLower?.includes('gpu')) {
+      return 'https://via.placeholder.com/400x300/4CAF50/FFFFFF?text=GPU';
+    } else if (typeLower?.includes('ram')) {
+      return 'https://via.placeholder.com/400x300/FF9800/FFFFFF?text=RAM';
+    } else if (typeLower?.includes('motherboard')) {
+      return 'https://via.placeholder.com/400x300/9C27B0/FFFFFF?text=Motherboard';
+    } else {
+      return 'https://via.placeholder.com/400x300/607D8B/FFFFFF?text=Component';
+    }
   };
 
   const productSpecs = getProductSpecs(product);
