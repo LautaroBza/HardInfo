@@ -13,34 +13,67 @@ import {
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useEffect, useState } from 'react';
+import apiService from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
-export default function MediaCard({ component, hideCompareButton }) {
+export default function MediaCard({ component, hideCompareButton, onRemoveFavorite }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const productId = component.id_producto || component.id;
 
+  // Verificar si el producto está en favoritos al cargar
   useEffect(() => {
-    const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-    setIsFavorite(favs.includes(productId));
-  }, [productId]);
+    const checkFavoriteStatus = async () => {
+      if (!isAuthenticated) {
+        setIsFavorite(false);
+        return;
+      }
 
-  const handleToggleFavorite = () => {
-    const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-    let newFavs;
+      try {
+        const favorites = await apiService.getFavorites();
+        // Convertir ambos a string para comparación consistente
+        const isInFavorites = favorites.some(fav => 
+          String(fav.product_id) === String(productId)
+        );
+        setIsFavorite(isInFavorites);
+      } catch (error) {
+        console.error('Error checking favorite status:', error);
+        setIsFavorite(false);
+      }
+    };
 
-    if (isFavorite) {
-      newFavs = favs.filter(id => id !== productId);
-    } else {
-      newFavs = [...favs, productId];
+    checkFavoriteStatus();
+  }, [productId, isAuthenticated]);
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      // Redirigir a login si no está autenticado
+      navigate('/login');
+      return;
     }
 
-    localStorage.setItem('favoritos', JSON.stringify(newFavs));
-    setIsFavorite(!isFavorite);
+    setLoading(true);
     
-    // Dispatch custom event to notify other components about favorites change
-    window.dispatchEvent(new CustomEvent('favoritesChanged'));
+    try {
+      if (isFavorite) {
+        await apiService.removeFromFavorites(String(productId));
+        setIsFavorite(false);
+        if (onRemoveFavorite) {
+          onRemoveFavorite(productId);
+        }
+      } else {
+        await apiService.addToFavorites(String(productId), component.name);
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!component) return null;
@@ -77,6 +110,7 @@ export default function MediaCard({ component, hideCompareButton }) {
     >
       <IconButton
         onClick={handleToggleFavorite}
+        disabled={loading}
         sx={{
           position: 'absolute',
           top: 8,

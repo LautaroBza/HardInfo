@@ -12,7 +12,10 @@ import {
   ListItem,
   ListItemText,
   Popper,
-  ClickAwayListener
+  ClickAwayListener,
+  Avatar,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import ComputerIcon from '@mui/icons-material/Computer';
@@ -21,6 +24,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useAuth } from '../contexts/AuthContext';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 // Custom styles for the search bar
 const Search = styled('div')(({ theme }) => ({
@@ -69,9 +74,11 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const { products, loadAllProducts } = useProducts();
+  const { user, isAuthenticated, logout } = useAuth();
 
   // Cargar productos al montar el componente
   useEffect(() => {
@@ -125,6 +132,20 @@ const Navbar = () => {
     setShowResults(false);
   };
 
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleMenuClose();
+    navigate('/');
+  };
+
   // Función para obtener la primera especificación del producto
   const getFirstSpec = (product) => {
     if (product.propiedad_cpu) {
@@ -146,9 +167,12 @@ const Navbar = () => {
     <AppBar position="static">
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size="large" edge="start" color="inherit" aria-label="logo" sx={{ mr: 1 }}>
-            <img src='../src/assets/logoWhite.png' alt="Logo" style={{ width: 80, height: 80 }} />
-          </IconButton>
+          <Button color='inherit' component={Link} to='/'>
+            <img src='../src/assets/logoSinTexto.png' alt="Logo" style={{ width: 40, height: 40 }}/>
+          </Button>
+          <Typography variant="h6" component="div">
+            HardInfo
+          </Typography>
         </Box>
         <Box sx={{ position: 'relative' }} ref={searchRef}>
           <ClickAwayListener onClickAway={handleClickAway}>
@@ -193,15 +217,54 @@ const Navbar = () => {
             </Search>
           </ClickAwayListener>
         </Box>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} alignItems="center">
           <Button color="inherit" component={Link} to="/productos-destacados">Productos Destacados</Button>
           <Button color="inherit" component={Link} to="/comparar">Comparar</Button>
-          <Button color="inherit" component={Link} to="/profile">Perfil</Button>
-          <Button color="inherit" component={Link} to="/login"> Login </Button>
-          <Button color="inherit" component={Link} to="/register"> Crea tu cuenta  </Button>
-          <IconButton component={Link} to="/favoritos" color="inherit">
-            <FavoriteBorderIcon />
-          </IconButton>
+          
+          {isAuthenticated ? (
+            <>
+              <Button color="inherit" component={Link} to="/profile">Perfil</Button>
+              <IconButton component={Link} to="/favoritos" color="inherit">
+                <FavoriteBorderIcon />
+              </IconButton>
+              <IconButton
+                onClick={handleMenuOpen}
+                color="inherit"
+                sx={{ ml: 1 }}
+              >
+                <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+                  {user?.nombre?.charAt(0)?.toUpperCase() || <AccountCircleIcon />}
+                </Avatar>
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                <MenuItem disabled>
+                  <Typography variant="body2">
+                    {user?.nombre} {user?.apellido}
+                  </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  Cerrar Sesión
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <>
+              <Button color="inherit" component={Link} to="/login">Login</Button>
+              <Button color="inherit" component={Link} to="/register">Crea tu cuenta</Button>
+            </>
+          )}
         </Stack>
       </Toolbar>
     </AppBar>

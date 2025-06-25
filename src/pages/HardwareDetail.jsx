@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Paper, Button, Chip, Divider, Grid, Rating, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, Button, Chip, Divider, Grid, Rating, CircularProgress, Alert } from '@mui/material';
 import { useProducts } from '../hooks/useProducts';
+import apiService from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const HardwareDetail = () => {
   console.log('HardwareDetail component loaded!');
@@ -10,8 +12,30 @@ const HardwareDetail = () => {
   const { getProductById, loading, error } = useProducts();
   const [product, setProduct] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+  const [favoriteError, setFavoriteError] = useState('');
+  const { isAuthenticated } = useAuth();
 
   console.log('HardwareDetail render with id:', id);
+
+  // Verificar si el producto está en favoritos
+  const checkFavoriteStatus = async () => {
+    if (!isAuthenticated) {
+      setIsFavorite(false);
+      return;
+    }
+
+    try {
+      const favorites = await apiService.getFavorites();
+      const isInFavorites = favorites.some(fav => 
+        String(fav.product_id) === String(id)
+      );
+      setIsFavorite(isInFavorites);
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+      setIsFavorite(false);
+    }
+  };
 
   useEffect(() => {
     console.log('HardwareDetail useEffect triggered with id:', id);
@@ -22,33 +46,41 @@ const HardwareDetail = () => {
         console.log('Product loaded:', productData);
         setProduct(productData);
         
-        // Verificar si el producto está en favoritos
-        const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-        setIsFavorite(favs.includes(parseInt(id)));
+
+        await checkFavoriteStatus();
       } else {
         console.error('ID de producto inválido:', id);
       }
     };
     loadProduct();
-  }, [id, getProductById]);
+  }, [id, getProductById, isAuthenticated]);
 
-  const handleToggleFavorite = () => {
-    console.log('handleToggleFavorite clicked!', { id, isFavorite });
-    const favs = JSON.parse(localStorage.getItem('favoritos')) || [];
-    let newFavs;
-
-    if (isFavorite) {
-      newFavs = favs.filter(favId => favId !== parseInt(id));
-    } else {
-      newFavs = [...favs, parseInt(id)];
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      // Redirigir a login si no está autenticado
+      navigate('/login');
+      return;
     }
 
-    console.log('Updating favorites:', { old: favs, new: newFavs });
-    localStorage.setItem('favoritos', JSON.stringify(newFavs));
-    setIsFavorite(!isFavorite);
+    setFavoriteLoading(true);
+    setFavoriteError('');
     
-    // Dispatch custom event to notify other components about favorites change
-    window.dispatchEvent(new CustomEvent('favoritesChanged'));
+    try {
+      if (isFavorite) {
+        console.log('🗑️ Eliminando de favoritos:', id);
+        await apiService.removeFromFavorites(String(id));
+        setIsFavorite(false);
+      } else {
+        console.log('❤️ Agregando a favoritos:', id, product.name);
+        await apiService.addToFavorites(String(id), product.name);
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      setFavoriteError('Error al actualizar favoritos: ' + error.message);
+    } finally {
+      setFavoriteLoading(false);
+    }
   };
 
   const handleCompare = () => {
@@ -244,9 +276,20 @@ const HardwareDetail = () => {
               )}
             </Grid>
             
+            {favoriteError && (
+              <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+                {favoriteError}
+              </Alert>
+            )}
+            
             <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
-              <Button variant="contained" size="large" onClick={handleToggleFavorite}>
-                {isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+              <Button 
+                variant="contained" 
+                size="large" 
+                onClick={handleToggleFavorite}
+                disabled={favoriteLoading}
+              >
+                {favoriteLoading ? 'Cargando...' : (isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos')}
               </Button>
               <Button variant="outlined" size="large" onClick={handleCompare}>
                 Comparar
