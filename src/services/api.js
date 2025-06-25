@@ -228,6 +228,43 @@ class ApiService {
     console.log('✅ Producto eliminado de favoritos:', result);
     return result;
   }
+
+  // Ratings (requiere autenticación)
+  async getProductRating(productId) {
+    console.log(`⭐ Obteniendo rating del producto: ${productId}`);
+    const result = await this.request(`/ratings/${productId}`);
+    console.log('✅ Rating obtenido:', result);
+    return result;
+  }
+
+  async submitRating(productId, rating, comment = null) {
+    console.log(`⭐ Enviando rating: ${productId} - ${rating} estrellas`);
+    const result = await this.request(`/ratings/${productId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        rating: rating,
+        comment: comment
+      }),
+    });
+    console.log('✅ Rating enviado:', result);
+    return result;
+  }
+
+  async getAllProductRatings(productId) {
+    console.log(`📋 Obteniendo todos los ratings del producto: ${productId}`);
+    const result = await this.request(`/ratings/${productId}/all`);
+    console.log('✅ Ratings obtenidos:', result);
+    return result;
+  }
+
+  async deleteRating(productId) {
+    console.log(`🗑️ Eliminando rating del producto: ${productId}`);
+    const result = await this.request(`/ratings/${productId}`, {
+      method: 'DELETE',
+    });
+    console.log('✅ Rating eliminado:', result);
+    return result;
+  }
 }
 
 // Crear una instancia singleton

@@ -4,6 +4,7 @@ import { Box, Typography, Paper, Button, Chip, Divider, Grid, Rating, CircularPr
 import { useProducts } from '../hooks/useProducts';
 import apiService from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import RatingComponent from '../components/RatingComponent';
 
 const HardwareDetail = () => {
   console.log('HardwareDetail component loaded!');
@@ -46,7 +47,6 @@ const HardwareDetail = () => {
         console.log('Product loaded:', productData);
         setProduct(productData);
         
-
         await checkFavoriteStatus();
       } else {
         console.error('ID de producto inválido:', id);
@@ -245,8 +245,6 @@ const HardwareDetail = () => {
               ${product.price?.toFixed(2) || '--'}
             </Typography>
             
-            <Rating value={4.5} precision={0.5} readOnly sx={{ mb: 2 }} />
-            
             <Typography variant="body1" paragraph>
               {product.desc || product.description || 'Descripción no disponible'}
             </Typography>
@@ -298,6 +296,7 @@ const HardwareDetail = () => {
           </Grid>
         </Grid>
       </Paper>
+      <RatingComponent productId={id} productName={product.name} />
     </Box>
   );
 };
