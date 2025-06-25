@@ -3,7 +3,6 @@ import MediaCard from '../components/Card.jsx'
 import { Grid, Typography, Container, CircularProgress, Alert } from '@mui/material';
 import apiService from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import DebugPanel from '../components/DebugPanel';
 
 export default function Favoritos() {
   const [favComponents, setFavComponents] = useState([]);
