@@ -9,31 +9,34 @@ import ComparePage from './pages/ComparePage';
 import Favoritos from './pages/FavoritosPage';
 import ProductosDestacados from './pages/ProductosDestacados.jsx';
 import { AuthProvider } from './contexts/AuthContext';
+import { CompareProvider } from './contexts/CompareContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <AuthProvider>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/productos-destacados" element={<ProductosDestacados />} />
-        <Route path="/login" element={<LoginRegisterPage mode="login" />} />
-        <Route path="/register" element={<LoginRegisterPage mode="register" />} />
-        <Route path="*" element={<NotFoundPage />} />
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        } />
-        <Route path="/hardware/:id" element={<HardwareDetail />} />
-        <Route path="/comparar" element={<ComparePage />} />
-        <Route path="/favoritos" element={
-          <ProtectedRoute>
-            <Favoritos />
-          </ProtectedRoute>
-        } />
-      </Routes>
+      <CompareProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/productos-destacados" element={<ProductosDestacados />} />
+          <Route path="/login" element={<LoginRegisterPage mode="login" />} />
+          <Route path="/register" element={<LoginRegisterPage mode="register" />} />
+          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/hardware/:id" element={<HardwareDetail />} />
+          <Route path="/comparar" element={<ComparePage />} />
+          <Route path="/favoritos" element={
+            <ProtectedRoute>
+              <Favoritos />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </CompareProvider>
     </AuthProvider>
   );
 }

@@ -15,6 +15,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useEffect, useState } from 'react';
 import apiService from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useCompare } from '../contexts/CompareContext';
 
 export default function MediaCard({ component, hideCompareButton, onRemoveFavorite }) {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function MediaCard({ component, hideCompareButton, onRemoveFavori
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuth();
+  const { addComponent, selectedComponents } = useCompare();
 
   const productId = component.id_producto || component.id;
 
@@ -167,6 +169,7 @@ export default function MediaCard({ component, hideCompareButton, onRemoveFavori
             sx={{ ml: 1 }}
             onClick={() => {
               if (productId && !isNaN(Number(productId))) {
+                addComponent(component);
                 navigate(`/comparar?categoria=${encodeURIComponent(component.type || component.category)}&id=${productId}`);
               } else {
                 console.error('ID de producto inválido:', productId);

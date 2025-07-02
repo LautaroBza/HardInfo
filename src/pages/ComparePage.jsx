@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Card from '../components/Card';
 import { useProducts } from '../hooks/useProducts';
+import { useCompare } from '../contexts/CompareContext';
 import CompareSpecs from '../components/CompareSpecs';
 
 function ComparePage() {
-  const [selectedComponents, setSelectedComponents] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { products, loading, error, loadAllProducts, getProductById } = useProducts();
+  const { selectedComponents, addComponent, removeComponent } = useCompare();
 
   // Leer parámetros de la URL
   const searchParams = new URLSearchParams(location.search);
@@ -36,7 +37,7 @@ function ComparePage() {
           if (idParam && !isNaN(Number(idParam))) {
             const found = await getProductById(parseInt(idParam));
             if (found && found.type?.toLowerCase() === categoriaParam.toLowerCase()) {
-              setSelectedComponents([found]);
+              addComponent(found);
             }
           } else {
             console.error('ID de producto inválido para comparación:', idParam);
@@ -50,18 +51,14 @@ function ComparePage() {
     if (products.length > 0) {
       loadSelectedProduct();
     }
-  }, [idParam, categoriaParam, selectedComponents.length, products.length, getProductById]);
+  }, [idParam, categoriaParam, selectedComponents.length, products.length, getProductById, addComponent]);
 
   const handleComponentSelect = (component) => {
-    const componentId = component.id_producto || component.id;
-    if (selectedComponents.length < 2 && !selectedComponents.some(c => (c.id_producto || c.id) === componentId)) {
-      setSelectedComponents([...selectedComponents, component]);
-    }
+    addComponent(component);
   };
 
   const handleRemoveComponent = (index) => {
-    const newSelected = selectedComponents.filter((_, i) => i !== index);
-    setSelectedComponents(newSelected);
+    removeComponent(index);
   };
 
   if (loading) {

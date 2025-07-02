@@ -18,13 +18,13 @@ import {
   MenuItem
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
-import ComputerIcon from '@mui/icons-material/Computer';
 import SearchIcon from '@mui/icons-material/Search';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useAuth } from '../contexts/AuthContext';
+import { useCompare } from '../contexts/CompareContext';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 // Custom styles for the search bar
@@ -77,8 +77,10 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const searchRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { products, loadAllProducts } = useProducts();
   const { user, isAuthenticated, logout } = useAuth();
+  const { clearComparison } = useCompare();
 
   // Cargar productos al montar el componente
   useEffect(() => {
@@ -144,6 +146,14 @@ const Navbar = () => {
     logout();
     handleMenuClose();
     navigate('/');
+  };
+
+  const handleCompareClick = () => {
+    if (location.pathname === '/comparar') {
+      clearComparison();
+    } else {
+      navigate('/comparar');
+    }
   };
 
   // Función para obtener la primera especificación del producto
